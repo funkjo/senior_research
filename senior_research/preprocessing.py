@@ -49,4 +49,17 @@ def convert_img2array():
     images = np.asarray(images)
     labels = np.asarray(labels)
 
-    return images, labels
+    images2 = images / 255.0
+
+    return images2, labels
+
+
+def create_train_test_sets(images, labels, _test_size):
+    """
+    Uses scikit-learns train_test_split function to split the data into a training set and test set
+    Returns training images, test images, training labels, test labels
+    """
+    
+    X_train, X_test, y_train, y_test = train_test_split(images, labels, test_size=_test_size, random_state=32)
+
+    return X_train, X_test, y_train, y_test
