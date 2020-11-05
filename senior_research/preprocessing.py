@@ -13,6 +13,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+import cv2
 
 
 def convert_img2array():
@@ -23,30 +24,45 @@ def convert_img2array():
 
     images = []
     labels = []
+    classes = ['Car', 'Crosswalk', 'Hydrant', 'TrafficLight']
+    datadir = '/Users/johnfunk/OneDrive - Eastern Connecticut State University/Courses/Computer Science/Senior-Research/github-project/senior_research/senior_research/data'
     directories = ["senior_research/data/Car", "senior_research/data/Crosswalk", "senior_research/data/Hydrant", "senior_research/data/TrafficLight"]
 
-    for folder in directories:
-        if "Car" or "Crosswalk" in folder.path:
+    # for folder in directories:
+    #     if "Car" or "Crosswalk" in folder.path:
+    for _class in classes:
+        path = os.path.join(datadir, _class)
+        if _class == 'Car' or _class == 'Crosswalk':
             i = 0
-            for entry in os.scandir(folder):
+            # for entry in os.scandir(folder):
+            for img in os.listdir(path):
                 if i == 1000:
                     i = 0
                     break
-                if (entry.path.endswith(".jpg") or entry.path.endswith(".png")) and entry.is_file():
-                    img = load_img(entry.path)
-                    converted = img_to_array(img)
-                    images.append(converted)
+                # if (entry.path.endswith(".jpg") or entry.path.endswith(".png")) and entry.is_file():
+                # img = load_img(entry.path)
+                # converted = img_to_array(img)
+                converted = cv2.imread(os.path.join(path,img), cv2.IMREAD_GRAYSCALE)
+                images.append(converted)
+                if _class == 'Car':
                     labels.append(0)
-                    i += 1
+                else:
+                    labels.append(1)
+                i += 1
         else:
-            for entry in folder:
-                if (entry.path.endswith(".jpg") or entry.path.endswith(".png")) and entry.is_file():
-                    img = load_img(entry.path)
-                    converted = img_to_array(img)
-                    images.append(converted)
-                    labels.append(0)
+            # for entry in folder:
+            for img in os.listdir(path):
+                # if (entry.path.endswith(".jpg") or entry.path.endswith(".png")) and entry.is_file():
+                # img = load_img(entry.path)
+                # converted = img_to_array(img)
+                converted = cv2.imread(os.path.join(path,img), cv2.IMREAD_GRAYSCALE)
+                images.append(converted)
+                if _class == 'Hydrant':
+                    labels.append(2)
+                else:
+                    labels.append(3)
 
-    images = np.asarray(images)
+    images = np.asarray(images).reshape(len(images), 120, 120)
     labels = np.asarray(labels)
 
     images2 = images / 255.0
